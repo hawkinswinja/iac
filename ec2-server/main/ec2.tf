@@ -24,12 +24,32 @@ resource "aws_default_security_group" "default" {
 }
 
 resource "aws_instance" "main" {
-  ami           = data.aws_ami.ami.id
+  ami           = var.ami
   instance_type = var.instance-type
   associate_public_ip_address = true
   key_name = var.key-name
   subnet_id = aws_subnet.main.id
-  
+/*
+  connection {
+    type     = "ssh"
+    user     = "ec2-user"
+    host     = self.public_ip
+    private_key = file(var.private-key)
+  }
+
+  provisioner "file" {
+    source      = "docker-setup.sh"
+    destination = "/tmp/script.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/script.sh",
+      "/tmp/script.sh",
+    ]
+  }
+*/
+
   tags = {
     Name = "main"
   }
@@ -39,24 +59,4 @@ resource "aws_eip" "bar" {
   domain = "vpc"
   instance                  = aws_instance.main.id
   depends_on                = [aws_internet_gateway.gw]
-}
-
-data "aws_ami" "ami" {
-  most_recent      = true
-  owners           = ["amazon"]
-
-  filter {
-   name   = "name"
-   values = ["amzn2-ami-hvm*"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
 }

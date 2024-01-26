@@ -1,6 +1,6 @@
-variable "region" {
+variable "ami" {
   type = string
-  description = "region to create the resources"
+  description = "instance ami id"
   default = "us-east-1"
 }
 
@@ -31,4 +31,8 @@ variable "key-name" {
   type = string
   description = "ssh key to access ec2"
   default = "aws101"
+}
+
+variable "private-key" {
+  default = "/home/zemaria/aws_files/aws101.pem"
 }
