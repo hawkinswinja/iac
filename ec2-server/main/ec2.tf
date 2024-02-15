@@ -29,16 +29,16 @@ resource "aws_instance" "main" {
   associate_public_ip_address = true
   key_name = var.key-name
   subnet_id = aws_subnet.main.id
-/*
+
   connection {
     type     = "ssh"
-    user     = "ec2-user"
+    user     = "ubuntu"
     host     = self.public_ip
     private_key = file(var.private-key)
   }
 
   provisioner "file" {
-    source      = "docker-setup.sh"
+    source      = "/tmp/docker-setup.sh"
     destination = "/tmp/script.sh"
   }
 
@@ -48,7 +48,7 @@ resource "aws_instance" "main" {
       "/tmp/script.sh",
     ]
   }
-*/
+
 
   tags = {
     Name = "main"
