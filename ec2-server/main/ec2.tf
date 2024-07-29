@@ -38,7 +38,7 @@ resource "aws_instance" "main" {
   }
 
   provisioner "file" {
-    source      = "/tmp/docker-setup.sh"
+    source      = "path file to provision"
     destination = "/tmp/script.sh"
   }
 

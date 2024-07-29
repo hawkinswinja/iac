@@ -3,7 +3,7 @@ terraform {
     bucket = "ghw-statefiles"
     key    = "ec2-server"
     region = "us-east-1"
-    dynamo_table = "statelock"
+    dynamodb_table = "statelock"
   }
 }
 

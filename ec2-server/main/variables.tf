@@ -1,11 +1,12 @@
 variable "ami" {
   type = string
-  description = "instance ami id"
-  default = "us-east-1"
+  description = "instance ami id: defaults to Ubuntu, 22.04 LTS, arm64 jammy"
+  default = "ami-070f589e4b4a3fece"
 }
 
 variable "vpc-name" {
   type = string
+  default = ""
   description = "Name of the vpc to create"
 }
 
@@ -30,9 +31,9 @@ variable "instance-type" {
 variable "key-name" {
   type = string
   description = "ssh key to access ec2"
-  default = "aws101"
+  default = "us-east-1"
 }
 
 variable "private-key" {
-  default = "/home/zemaria/aws_files/aws101.pem"
+  default = "path to your private key file"
 }
