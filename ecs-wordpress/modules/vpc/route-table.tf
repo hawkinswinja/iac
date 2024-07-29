@@ -1,4 +1,4 @@
-# Routing table and subnet associations
+# Routing table, subnet associations and ECR
 
 resource "aws_route_table" "public-route-table" {
     vpc_id = aws_vpc.ecs-vpc.id
@@ -39,3 +39,11 @@ resource "aws_route_table_association" "subnet-association" {
     route_table_id = count.index % 2 == 0 ? aws_route_table.public-route-table.id : aws_route_table.private-route-table.id
 }
 
+resource "aws_ecr_repository" "repo" {
+  name                 = "${var.vpc_name}-repo"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
