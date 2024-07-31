@@ -19,7 +19,8 @@ resource "aws_ssm_parameter" "ssm-key" {
 resource "aws_rds_cluster" "aurora" {
   cluster_identifier      = "aurora-cluster"
   engine                  = "aurora-mysql"
-  engine_version          = "5.7.mysql_aurora.2.11.2"  # Example of a supported version
+  engine_mode             = "provisioned"
+  engine_version          = "8.0.mysql_aurora.3.05.2"
   master_username         = var.db_username
   master_password         = var.db_password
   database_name           = var.db_name
@@ -31,21 +32,21 @@ resource "aws_rds_cluster" "aurora" {
   storage_encrypted       = true
   skip_final_snapshot     = true
 
-  # scaling_configuration {
-  #   auto_pause               = true
-  #   max_capacity             = 2
-  #   min_capacity             = 1
-  #   seconds_until_auto_pause = 300
-  # }
+  serverlessv2_scaling_configuration {
+    # auto_pause               = true
+    max_capacity             = 2
+    min_capacity             = 1
+    # seconds_until_auto_pause = 300
+  }
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
-  cluster_identifier = aws_rds_cluster.aurora.id
-  instance_class     = "db.t3.micro"
-  engine             = aws_rds_cluster.aurora.engine
-  engine_version     = aws_rds_cluster.aurora.engine_version
+  cluster_identifier  = aws_rds_cluster.aurora.id
+  instance_class      = "db.serverless"
+  engine              = aws_rds_cluster.aurora.engine
+  engine_version      = aws_rds_cluster.aurora.engine_version
   publicly_accessible = false
-  db_subnet_group_name = aws_db_subnet_group.db.name
+  # db_subnet_group_name = aws_db_subnet_group.db.name
 }
 
 # resource "aws_db_instance" "db" {
