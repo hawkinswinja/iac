@@ -2,7 +2,6 @@
 
 resource "aws_ssm_parameter" "ssm-key" {
   for_each = tomap({
-    # "/wordpress/WORDPRESS_DB_HOST"     = aws_db_instance.db.address
     "/wordpress/WORDPRESS_DB_HOST"     = aws_rds_cluster.aurora.endpoint
     "/wordpress/WORDPRESS_DB_USER"     = var.db_username
     "/wordpress/WORDPRESS_DB_PASSWORD" = var.db_password
@@ -33,10 +32,8 @@ resource "aws_rds_cluster" "aurora" {
   skip_final_snapshot     = true
 
   serverlessv2_scaling_configuration {
-    # auto_pause               = true
     max_capacity             = 2
     min_capacity             = 1
-    # seconds_until_auto_pause = 300
   }
 }
 
@@ -46,7 +43,6 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
   engine              = aws_rds_cluster.aurora.engine
   engine_version      = aws_rds_cluster.aurora.engine_version
   publicly_accessible = false
-  # db_subnet_group_name = aws_db_subnet_group.db.name
 }
 
 # resource "aws_db_instance" "db" {
@@ -76,17 +72,10 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
 
 resource "aws_db_subnet_group" "db" {
   name       = "db-subnet-group"
-  subnet_ids = aws_subnet.ecs-subnet[*].id
+  subnet_ids = aws_subnet.ecs-private-subnet[*].id
 }
+
 
 output "db_cluster_endpoint" {
   value = aws_rds_cluster.aurora.endpoint
 }
-
-# output "db_address" {
-#   value = aws_db_instance.db.address
-# }
-
-# data "aws_subnet" "first_private_subnet" {
-#   id = local.private_subnet_associations[0].subnet_id
-# }

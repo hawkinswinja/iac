@@ -1,4 +1,3 @@
-
 # VPC, internet Gateway and Subnet creation
 
 resource "aws_vpc" "ecs-vpc" {
@@ -23,15 +22,28 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-resource "aws_subnet" "ecs-subnet" {
-  count = length(var.subnet_cidr)
+resource "aws_subnet" "ecs-public-subnet" {
+  count = length(var.public_subnet_cidr)
 
   vpc_id            = aws_vpc.ecs-vpc.id
-  cidr_block        = var.subnet_cidr[count.index]
+  cidr_block        = var.public_subnet_cidr[count.index]
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
 
   tags = {
-    Name = "${var.vpc_name}-subnet-${count.index}"
+    Name = "${var.vpc_name}-public-subnet-${count.index}"
+  }
+}
+
+resource "aws_subnet" "ecs-private-subnet" {
+  count = length(var.private_subnet_cidr)
+
+  vpc_id            = aws_vpc.ecs-vpc.id
+  cidr_block        = var.private_subnet_cidr[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+
+
+  tags = {
+    Name = "${var.vpc_name}-private-subnet-${count.index}"
   }
 }

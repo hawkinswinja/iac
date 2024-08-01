@@ -21,12 +21,6 @@ resource "aws_security_group" "public_sg" {
   }
 
   egress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]
-  }
-  egress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -36,7 +30,7 @@ resource "aws_security_group" "public_sg" {
 
 resource "aws_security_group" "private_sg" {
   name        = "private_sg"
-  description = "Allow inbound traffic on port 3306 and outbound on ephemeral ports"
+  description = "Allow inbound traffic from public_sg on port 22 and outbound traffic to private_sg on port 3306"
 
   vpc_id = aws_vpc.ecs-vpc.id
 
@@ -50,6 +44,13 @@ resource "aws_security_group" "private_sg" {
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    security_groups = [aws_security_group.public_sg.id]
+  }
+
+  egress {
+    from_port   = 3306
+    to_port     = 3306
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }

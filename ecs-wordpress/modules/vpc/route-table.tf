@@ -33,24 +33,19 @@ resource "aws_route_table" "private-route-table" {
   }
 }
 
-resource "aws_route_table_association" "subnet-association" {
-  count          = length(var.subnet_cidr)
-  subnet_id      = element(aws_subnet.ecs-subnet[*].id, count.index)
-  route_table_id = count.index % 2 == 0 ? aws_route_table.public-route-table.id : aws_route_table.private-route-table.id
+resource "aws_route_table_association" "private_subnet-association" {
+  count          = length(var.private_subnet_cidr)
+  subnet_id      = aws_subnet.ecs-private-subnet[count.index].id
+  route_table_id = aws_route_table.private-route-table.id
 }
 
-# Define a local value to filter subnet associations for the private route table
-locals {
-  private_subnet_associations = [
-    for association in aws_route_table_association.subnet-association :
-    association if association.route_table_id == aws_route_table.private-route-table.id
-  ]
+resource "aws_route_table_association" "public_subnet-association" {
+  count          = length(var.public_subnet_cidr)
+  subnet_id      = aws_subnet.ecs-public-subnet[count.index].id
+  route_table_id = aws_route_table.public-route-table.id
 }
 
-# Output the subnets associated with the private route table
-output "private_subnet_ids" {
-  value = [for association in local.private_subnet_associations : association.subnet_id]
-}
+# ECR repository
 
 resource "aws_ecr_repository" "repo" {
   name                 = "${var.vpc_name}-repo"
