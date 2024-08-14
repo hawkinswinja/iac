@@ -44,14 +44,3 @@ resource "aws_route_table_association" "public_subnet-association" {
   subnet_id      = aws_subnet.ecs-public-subnet[count.index].id
   route_table_id = aws_route_table.public-route-table.id
 }
-
-# ECR repository
-
-resource "aws_ecr_repository" "repo" {
-  name                 = "${var.vpc_name}-repo"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}

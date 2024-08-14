@@ -19,29 +19,9 @@ variable "vpc_name" {
   type        = string
 }
 
-variable "db_password" {
-  description = "Password for the database"
-  type        = string
-  sensitive   = true
-}
+# variable "availability_zones" {
+#   description = "List of availability zones"
+#   type        = list(string)
+#   default     = ["eu-west-1a", "eu-west-1b"]  
 
-# variable "db_host" {
-#     description = "Host for the database"
-#     type = string  
 # }
-
-variable "db_name" {
-  description = "Name for the database"
-  type        = string
-}
-
-variable "db_username" {
-  description = "Username for the database"
-  type        = string
-}
-
-variable "kms_key_id" {
-  description = "KMS key id for the SSM parameter"
-  type        = string
-  sensitive   = true
-}
