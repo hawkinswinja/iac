@@ -14,9 +14,9 @@ data "aws_ami" "amazon_linux_ecs" {
   owners = ["amazon"]
 }
 resource "aws_launch_template" "main" {
-  name_prefix   = "ecs-launch-template"
-  image_id      = data.aws_ami.amazon_linux_ecs.id
-  instance_type = var.ecs_instance_type
+  name_prefix            = "ecs-launch-template"
+  image_id               = data.aws_ami.amazon_linux_ecs.id
+  instance_type          = var.ecs_instance_type
   vpc_security_group_ids = var.ecs_security_groups
   iam_instance_profile {
     name = aws_iam_instance_profile.ecs_instance_profile.name
@@ -70,13 +70,13 @@ resource "aws_ecs_cluster" "main" {
 }
 
 resource "aws_ecs_cluster_capacity_providers" "example" {
-  cluster_name = aws_ecs_cluster.main.name
-  capacity_providers = [ aws_ecs_capacity_provider.main.name ]
+  cluster_name       = aws_ecs_cluster.main.name
+  capacity_providers = [aws_ecs_capacity_provider.main.name]
 
   default_capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.main.name
-    base = 1
-    weight = 100
+    base              = 1
+    weight            = 100
   }
 }
 
@@ -85,7 +85,7 @@ resource "aws_ecs_cluster_capacity_providers" "example" {
 resource "aws_ecr_repository" "repo" {
   name                 = var.repo-name
   image_tag_mutability = "MUTABLE"
-  force_delete = "true"
+  force_delete         = "true"
 
   image_scanning_configuration {
     scan_on_push = true

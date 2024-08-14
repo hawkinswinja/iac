@@ -21,5 +21,5 @@ variable "ecs_instance_type" {
 }
 variable "ecs_security_groups" {
   description = "Security group IDs for the ECS cluster"
-  type        = list(string)  
+  type        = list(string)
 }

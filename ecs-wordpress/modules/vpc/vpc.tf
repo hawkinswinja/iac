@@ -18,6 +18,23 @@ resource "aws_internet_gateway" "ecs-igw" {
   }
 }
 
+resource "aws_eip" "nat" {
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.ecs-igw]
+
+  tags = {
+    Name = "${var.vpc_name}-nat-eip"
+  }
+}
+
+resource "aws_nat_gateway" "ecs-ngw" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.ecs-public-subnet[0].id
+  tags = {
+    Name = "${var.vpc_name}-ngw"
+  }
+}
+
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -48,6 +65,6 @@ resource "aws_subnet" "ecs-private-subnet" {
   }
 }
 
-output  "ecs-private-subnet" {
+output "ecs-private-subnet" {
   value = aws_subnet.ecs-private-subnet[*].id
 }

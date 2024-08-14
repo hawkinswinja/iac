@@ -34,5 +34,5 @@ variable "name" {
 variable "rds-security-group" {
   description = "Security group ID for the RDS instance"
   type        = list(string)
-  
+
 }

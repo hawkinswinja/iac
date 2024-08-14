@@ -2,13 +2,13 @@
 
 resource "aws_security_group" "public_sg" {
   name        = "public_sg"
-  description = "Allow inbound traffic on port 80 and 22, and outbound traffic on port 3306"
+  description = "Allow inbound traffic on port 443 and 22, and outbound traffic on port 3306"
 
   vpc_id = aws_vpc.ecs-vpc.id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -24,7 +24,7 @@ resource "aws_security_group" "public_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]
+    cidr_blocks = var.private_subnet_cidr
   }
 }
 
@@ -42,9 +42,9 @@ resource "aws_security_group" "private_sg" {
   }
 
   ingress {
-    from_port       = 3306
-    to_port         = 3306
-    protocol        = "tcp"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
     cidr_blocks = var.private_subnet_cidr
   }
 
