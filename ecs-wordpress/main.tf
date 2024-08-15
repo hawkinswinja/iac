@@ -20,6 +20,7 @@ module "ecs" {
   repo-name   = var.repo-name
   ecs_subnets = module.vpc.ecs-private-subnet
   ecs_security_groups = [module.vpc.private_sg]
+  efs_security_group_ids = [module.vpc.efs_sg]
   log_region = var.region
 }
 

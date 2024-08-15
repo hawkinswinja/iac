@@ -40,3 +40,8 @@ variable "container_port" {
   type        = number
   default     = 80
 }
+
+variable "efs_security_group_ids" {
+  description = "Security group ID for the EFS access point"
+  type        = list(string)
+}

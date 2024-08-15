@@ -66,3 +66,20 @@ resource "aws_security_group" "private_sg" {
 output "private_sg" {
   value = aws_security_group.private_sg.id
 }
+
+resource "aws_security_group" "efs_sg" {
+  name        = "efs_sg"
+  description = "Allow inbound traffic from private_sg on port 2049"
+
+  vpc_id = aws_vpc.ecs-vpc.id
+
+  ingress {
+    from_port       = 2049
+    to_port         = 2049
+    protocol        = "tcp"
+    security_groups = [aws_security_group.private_sg.id]
+  }
+}
+output "efs_sg" {
+  value = aws_security_group.efs_sg.id
+}
