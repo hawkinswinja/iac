@@ -24,10 +24,10 @@ resource "aws_launch_template" "main" {
   monitoring {
     enabled = true
   }
-  user_data = base64encode(<<EOF
-#!/bin/bash
-echo "ECS_CLUSTER=${aws_ecs_cluster.main.name}" >> /etc/ecs/ecs.config
-EOF
+  user_data = base64encode(<<-EOF
+      #!/bin/bash
+      echo ECS_CLUSTER=${aws_ecs_cluster.main.name} >> /etc/ecs/ecs.config;
+    EOF
   )
 }
 
@@ -92,3 +92,6 @@ resource "aws_ecr_repository" "repo" {
   }
 }
 
+output "ecr_repo_url" {
+  value = aws_ecr_repository.repo.repository_url
+}
