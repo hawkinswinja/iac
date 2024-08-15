@@ -95,3 +95,12 @@ resource "aws_ecr_repository" "repo" {
 output "ecr_repo_url" {
   value = aws_ecr_repository.repo.repository_url
 }
+
+# ECS cloud watch logs
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/${var.name}"
+  retention_in_days = 7
+  tags = {
+    Name = var.name
+  }
+}

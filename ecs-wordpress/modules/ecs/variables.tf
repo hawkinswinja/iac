@@ -23,3 +23,20 @@ variable "ecs_security_groups" {
   description = "Security group IDs for the ECS cluster"
   type        = list(string)
 }
+
+variable "tag" {
+  description = "Tag for the ECR repository"
+  type        = string
+  default     = "latest"
+}
+
+variable "log_region" {
+  description = "AWS region for logs. Set same as ECS region"
+  type        = string
+}
+
+variable "container_port" {
+  description = "Port on which the container listens"
+  type        = number
+  default     = 80
+}

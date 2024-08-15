@@ -33,3 +33,22 @@ variable "db_name" {
   description = "name of the database"
   type        = string
 }
+
+variable "container_port" {
+  description = "Port on which the container listens"
+  type        = number
+  default     = 80
+  
+}
+
+variable "ecs_instance_type" {
+  description = "Instance type for the ECS cluster"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "tag" {
+  description = "Tag for the ECR repository"
+  type        = string
+  default     = "latest"
+}

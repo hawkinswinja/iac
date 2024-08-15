@@ -14,19 +14,15 @@ module "vpc" {
 #   name        = var.vpc_name
 # }
 
-# module "ecs" {
-#   source      = "./modules/ecs"
-#   name        = var.vpc_name
-#   repo-name   = var.repo-name
-#   ecs_subnets = module.vpc.ecs-private-subnet
-#   ecs_security_groups = [module.vpc.private_sg]
-# }
+module "ecs" {
+  source      = "./modules/ecs"
+  name        = var.vpc_name
+  repo-name   = var.repo-name
+  ecs_subnets = module.vpc.ecs-private-subnet
+  ecs_security_groups = [module.vpc.private_sg]
+  log_region = var.region
+}
 
-# output "db_cluster_endpoint" {
-#   value = module.vpc.db_cluster_endpoint
-# }
-
-# output "db_address" {
-#   value = module.vpc.db_address
-
-# }
+output "ecr_repo_url" {
+  value = module.ecs.ecr_repo_url
+}
