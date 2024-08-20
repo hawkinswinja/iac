@@ -57,12 +57,19 @@ resource "aws_security_group" "private_sg" {
     cidr_blocks = var.private_subnet_cidr
   }
 
-  egress {
-    from_port   = 3306
-    to_port     = 3306
+  ingress {
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = var.private_subnet_cidr
+    security_groups = [aws_security_group.public_sg.id]
   }
+
+  # egress {
+  #   from_port   = 3306
+  #   to_port     = 3306
+  #   protocol    = "tcp"
+  #   cidr_blocks = var.private_subnet_cidr
+  # }
 
   # egress {
   #   from_port   = 2049
@@ -71,12 +78,19 @@ resource "aws_security_group" "private_sg" {
   #   security_groups = [ aws_security_group.efs_sg.id ]
   # }
 
+  # egress {
+  #   from_port   = 1024
+  #   to_port     = 65535
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
   egress {
-    from_port   = 1024
-    to_port     = 65535
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  
 }
 
 resource "aws_security_group" "efs_sg" {

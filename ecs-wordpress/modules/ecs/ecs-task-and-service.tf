@@ -10,22 +10,21 @@ resource "aws_ecs_task_definition" "task1" {
     name         = "wordpress-app",
     image        = "${aws_ecr_repository.repo.repository_url}:${var.image_tag}",
     essential = true,
-    portMappings = [
-        {
-          containerPort = 80
-          hostPort      = 80
-        }
-      ]
+    portMappings = [{
+        containerPort = 80,
+        protocol      = "tcp"
+    }],
+
     mount_points = [{
       sourceVolume  = "${var.name}-efs-volume",
-      containerPath = "/var/www/html",
+      containerPath = "/usr/share/nginx/html",
       readOnly      = false,
     }],
     environment = [
-      {
-      name  = "WORDPRESS_DB_HOST"
-      value = var.ssm-key["/wordpress/WORDPRESS_DB_HOST"].value
-      },
+    #   {
+    #   name  = "WORDPRESS_DB_HOST"
+    #   value = var.ssm-key["/wordpress/WORDPRESS_DB_HOST"].value
+    #   },
       {
       name  = "WORDPRESS_DB_NAME"
       value = var.ssm-key["/wordpress/WORDPRESS_DB_NAME"].value
