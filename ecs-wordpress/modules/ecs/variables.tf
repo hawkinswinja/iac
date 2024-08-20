@@ -69,3 +69,9 @@ variable "vpc_id" {
   description = "VPC ID for the ECS cluster"
   type        = string
 }
+
+variable "ssh_key_name" {
+  description = "SSH key  name for the ECS instances"
+  type        = string
+  default = "us-east-1"
+}

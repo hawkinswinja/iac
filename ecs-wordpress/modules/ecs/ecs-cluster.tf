@@ -1,23 +1,13 @@
-data "aws_ami" "amazon_linux_ecs" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
-  }
-
-  filter {
-    name   = "state"
-    values = ["available"]
-  }
-
-  owners = ["amazon"]
+data "aws_ssm_parameter" "ecs_node_ami" {
+  name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
 }
+
 resource "aws_launch_template" "main" {
   name_prefix            = "ecs-launch-template"
-  image_id               = data.aws_ami.amazon_linux_ecs.id
+  image_id               = data.aws_ssm_parameter.ecs_node_ami.value
   instance_type          = var.ecs_instance_type
   vpc_security_group_ids = var.ecs_security_groups
+  key_name               = var.ssh_key_name
   iam_instance_profile {
     name = aws_iam_instance_profile.ecs_instance_profile.name
   }
