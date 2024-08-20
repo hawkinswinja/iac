@@ -24,10 +24,9 @@ variable "ecs_security_groups" {
   type        = list(string)
 }
 
-variable "tag" {
+variable "image_tag" {
   description = "Tag for the ECR repository"
   type        = string
-  default     = "latest"
 }
 
 variable "log_region" {
@@ -44,4 +43,29 @@ variable "container_port" {
 variable "efs_security_group_ids" {
   description = "Security group ID for the EFS access point"
   type        = list(string)
+}
+
+variable "alb_security_group" {
+  description = "Security group IDs for the ALB"
+  type        = list(string)
+}
+
+variable "alb_subnets" {
+  description = "Subnet IDs for the ALB"
+  type        = list(string)
+}
+
+variable "certificate_arn" {
+  description = "ARN for the SSL certificate"
+  type        = string
+}
+
+variable "ssm-key" {
+  description = "SSM key for the RDS instance"
+  # type        = map(string)
+}
+
+variable "vpc_id" {
+  description = "VPC ID for the ECS cluster"
+  type        = string
 }

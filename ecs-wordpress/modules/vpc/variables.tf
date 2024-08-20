@@ -18,10 +18,3 @@ variable "vpc_name" {
   default     = "ecs-project1"
   type        = string
 }
-
-# variable "availability_zones" {
-#   description = "List of availability zones"
-#   type        = list(string)
-#   default     = ["eu-west-1a", "eu-west-1b"]  
-
-# }

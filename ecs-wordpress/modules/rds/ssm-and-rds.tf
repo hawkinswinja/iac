@@ -1,5 +1,4 @@
-# Create SSM encrypted data for wordpress environment
-
+# Create SSM encrypted data for wordpress environment variables
 resource "aws_ssm_parameter" "ssm-key" {
   for_each = tomap({
     "/wordpress/WORDPRESS_DB_HOST"     = aws_rds_cluster.aurora.endpoint

@@ -33,7 +33,7 @@ resource "aws_launch_template" "main" {
 
 resource "aws_autoscaling_group" "ecs_asg" {
   vpc_zone_identifier = var.ecs_subnets
-  desired_capacity    = 1
+  desired_capacity    = 2
   max_size            = 2
   min_size            = 1
 
@@ -43,7 +43,7 @@ resource "aws_autoscaling_group" "ecs_asg" {
   }
   tag {
     key                 = "AmazonECSManaged"
-    value               = true
+    value               = ""
     propagate_at_launch = true
   }
 
@@ -56,9 +56,14 @@ resource "aws_autoscaling_group" "ecs_asg" {
 
 resource "aws_ecs_capacity_provider" "main" {
   name = "${var.name}-ecs-capacity-provider"
+  # managed_termination_protection = "DISABLED"
+
   auto_scaling_group_provider {
     auto_scaling_group_arn = aws_autoscaling_group.ecs_asg.arn
+    managed_termination_protection = "DISABLED"
     managed_scaling {
+      maximum_scaling_step_size = 2
+      minimum_scaling_step_size = 1
       status          = "ENABLED"
       target_capacity = 100
     }
@@ -90,10 +95,6 @@ resource "aws_ecr_repository" "repo" {
   image_scanning_configuration {
     scan_on_push = true
   }
-}
-
-output "ecr_repo_url" {
-  value = aws_ecr_repository.repo.repository_url
 }
 
 # ECS cloud watch logs

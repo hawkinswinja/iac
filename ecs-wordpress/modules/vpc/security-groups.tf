@@ -2,11 +2,12 @@
 
 resource "aws_security_group" "public_sg" {
   name        = "public_sg"
-  description = "Allow inbound traffic on port 443 and 22, and outbound traffic on port 3306"
+  description = "Allow inbound traffic on port 443 and 22"
 
   vpc_id = aws_vpc.ecs-vpc.id
 
   ingress {
+    description = "Allow inbound traffic from the internet on port 443"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -21,6 +22,14 @@ resource "aws_security_group" "public_sg" {
   }
 
   egress {
+    description = "Allow outbound traffic to private subnet"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.private_subnet_cidr
+  }
+
+  egress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -30,7 +39,7 @@ resource "aws_security_group" "public_sg" {
 
 resource "aws_security_group" "private_sg" {
   name        = "private_sg"
-  description = "Allow inbound traffic from public_sg on port 22 and outbound traffic to private_sg on port 3306"
+  description = "Allow inbound traffic from public_sg on port 22 and 80"
 
   vpc_id = aws_vpc.ecs-vpc.id
 
@@ -55,16 +64,19 @@ resource "aws_security_group" "private_sg" {
     cidr_blocks = var.private_subnet_cidr
   }
 
+  # egress {
+  #   from_port   = 2049
+  #   to_port     = 2049
+  #   protocol    = "tcp"
+  #   security_groups = [ aws_security_group.efs_sg.id ]
+  # }
+
   egress {
-    from_port   = 0
+    from_port   = 1024
     to_port     = 65535
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
-
-output "private_sg" {
-  value = aws_security_group.private_sg.id
 }
 
 resource "aws_security_group" "efs_sg" {
@@ -79,7 +91,4 @@ resource "aws_security_group" "efs_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.private_sg.id]
   }
-}
-output "efs_sg" {
-  value = aws_security_group.efs_sg.id
 }

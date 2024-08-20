@@ -64,7 +64,3 @@ resource "aws_subnet" "ecs-private-subnet" {
     Name = "${var.vpc_name}-private-subnet-${count.index}"
   }
 }
-
-output "ecs-private-subnet" {
-  value = aws_subnet.ecs-private-subnet[*].id
-}

@@ -4,14 +4,41 @@ resource "aws_ecs_task_definition" "task1" {
   task_role_arn      = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.ecs_exec_role.arn
   network_mode       = "awsvpc"
-  cpu                = 256
-  memory             = 256
-
+  # cpu                = 256
+  memory             = 128
   container_definitions = jsonencode([{
-    name         = "${var.name}-container",
-    image        = "${aws_ecr_repository.repo.repository_url}:${var.tag}",
-    essential    = true,
-    portMappings = [{ containerPort = var.container_port }],
+    name         = "wordpress-app",
+    image        = "${aws_ecr_repository.repo.repository_url}:${var.image_tag}",
+    essential = true,
+    portMappings = [
+        {
+          containerPort = 80
+          hostPort      = 80
+        }
+      ]
+    mount_points = [{
+      sourceVolume  = "${var.name}-efs-volume",
+      containerPath = "/var/www/html",
+      readOnly      = false,
+    }],
+    environment = [
+      {
+      name  = "WORDPRESS_DB_HOST"
+      value = var.ssm-key["/wordpress/WORDPRESS_DB_HOST"].value
+      },
+      {
+      name  = "WORDPRESS_DB_NAME"
+      value = var.ssm-key["/wordpress/WORDPRESS_DB_NAME"].value
+      },
+      {
+      name  = "WORDPRESS_DB_USER"
+      value = var.ssm-key["/wordpress/WORDPRESS_DB_USER"].value
+      },
+      {
+      name  = "WORDPRESS_DB_PASSWORD"
+      value = var.ssm-key["/wordpress/WORDPRESS_DB_PASSWORD"].value
+      },
+    ]
 
     logConfiguration = {
       logDriver = "awslogs",
@@ -40,59 +67,36 @@ resource "aws_ecs_task_definition" "task1" {
   }
 }
 
-# efs for task definition
-resource "aws_efs_file_system" "fs" {
-  creation_token = "${var.name}-efs"
-  performance_mode = "generalPurpose"
-  throughput_mode = "bursting"
-  encrypted = true
-#   lifecycle_policy {
-#     transition_to_ia = "AFTER_30_DAYS"
-#   }
-  tags = {
-    Name = "${var.name}-efs"
-  }
-}
 
-# efs access point for task definition
-resource "aws_efs_access_point" "test" {
-  file_system_id = aws_efs_file_system.fs.id
-  root_directory {
-    path = "/opt/data"
-    creation_info {
-      owner_gid = 1000
-      owner_uid = 1000
-      permissions = "755"
-    }
-  }
-}
-
-#efs mount target for task definition
-resource "aws_efs_mount_target" "efs_mount_target" {
-  count = length(var.ecs_subnets)
-  file_system_id = aws_efs_file_system.fs.id
-  subnet_id = var.ecs_subnets[count.index]
-  security_groups = var.efs_security_group_ids
-}
 # ECS SERVICE
-# resource "aws_ecs_service" "service1" {
-#   name            = "${var.name}-service"
-#   cluster         = aws_ecs_cluster.ecs_cluster.id
-#   task_definition = aws_ecs_task_definition.task1.arn
-#   desired_count   = 1
-#   launch_type     = "FARGATE"
+resource "aws_ecs_service" "wordpress" {
+  name            = "${var.name}-service"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.task1.arn
+  desired_count   = 2
+  # iam_role        = aws_iam_role.ecs_exec_role.arn
+  launch_type     = "EC2"
+  network_configuration {
+    subnets          = var.ecs_subnets
+    security_groups  = var.ecs_security_groups
+    assign_public_ip = false
+  }
+  ordered_placement_strategy {
+    type  = "binpack"
+    field = "cpu"
+  }
 
-#   network_configuration {
-#     subnets          = var.ecs_subnets
-#     security_groups  = var.ecs_security_groups
-#     assign_public_ip = false
-#   }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.alb_target_group.arn
+    container_name   = "wordpress-app"
+    container_port   = 80
+  }
 
-#   load_balancer {
-#     target_group_arn = aws_lb_target_group.tg.arn
-#     container_name   = "${var.name}-container"
-#     container_port   = var.container_port
-#   }
+  lifecycle {
+    ignore_changes = [desired_count]
+  }
 
-#   depends_on = [aws_lb_listener.listener]
-# }
+  # placement_constraints {
+  #   type       = "memberOf"
+  # }
+}

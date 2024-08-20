@@ -1,6 +1,6 @@
 variable "region" {
   description = "value of the region"
-  default     = "eu-west-1"
+  default     = "us-east-1"
   type        = string
 }
 
@@ -48,6 +48,17 @@ variable "ecs_instance_type" {
 }
 
 variable "tag" {
+  description = "Tag for the ECR repository"
+  type        = string
+  default     = "latest"
+}
+
+variable "certificate_arn" {
+  description = "ARN of the SSL/TLS certificate"
+  type        = string
+}
+
+variable "image_tag" {
   description = "Tag for the ECR repository"
   type        = string
   default     = "latest"
