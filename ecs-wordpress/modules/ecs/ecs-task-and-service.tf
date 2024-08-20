@@ -10,8 +10,9 @@ resource "aws_ecs_task_definition" "task1" {
     name         = "wordpress-app",
     image        = "${aws_ecr_repository.repo.repository_url}:${var.image_tag}",
     essential = true,
+    restart    = "always",
     portMappings = [{
-        containerPort = 80,
+        containerPort = var.container_port,
         protocol      = "tcp"
     }],
 
