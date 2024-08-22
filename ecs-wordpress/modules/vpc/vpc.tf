@@ -1,4 +1,4 @@
-# VPC, internet Gateway and Subnet creation
+# VPC, Internet Gateway, NAT Gateway, Public and Private Subnets
 
 resource "aws_vpc" "ecs-vpc" {
   cidr_block           = var.vpc_cidr

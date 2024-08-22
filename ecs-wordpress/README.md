@@ -32,3 +32,7 @@ The wordpress application runs as a container using ecs service to ensure desire
 - EC2 instance profile with EC2 container service role policy attached
 - ECS task role with allowed ecs-task permission
 - ECS task execution role using ECSTaskExecutionRolePolicy
+
+## Architecture Diagram
+
+![ECS Project Diagram](./ecs-project.png "ECS Project Diagram")
