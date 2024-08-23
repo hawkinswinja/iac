@@ -35,22 +35,16 @@ variable "db_name" {
 }
 
 variable "container_port" {
-  description = "Port on which the container listens"
+  description = "Port on which the container listens. Defaults to 80"
   type        = number
   default     = 80
   
 }
 
 variable "ecs_instance_type" {
-  description = "Instance type for the ECS cluster"
+  description = "Instance type for the ECS cluster. Default is t2.micro"
   type        = string
   default     = "t2.micro"
-}
-
-variable "tag" {
-  description = "Tag for the ECR repository"
-  type        = string
-  default     = "latest"
 }
 
 variable "certificate_arn" {
@@ -59,7 +53,25 @@ variable "certificate_arn" {
 }
 
 variable "image_tag" {
-  description = "Tag for the ECR repository"
+  description = "Tag for the ECR repository. Defaults to latest"
   type        = string
   default     = "latest"
+}
+
+variable "container_path" {
+  description = "Path to the container. Defaults to /var/www/html"
+  type        = string
+  default = "/var/www/html"
+}
+
+variable "ssh_key_name" {
+  description = "SSH key for the ECS instances used for debugging. Default is us-east-1" 
+  type        = string
+  default = "us-east-1"
+}
+
+variable "efs_direrctory" {
+  description = "Directory for the EFS. Defaults to /efs"
+  type        = string
+  default     = "/efs"
 }

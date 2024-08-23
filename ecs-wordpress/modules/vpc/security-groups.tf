@@ -43,26 +43,26 @@ resource "aws_security_group" "private_sg" {
 
   vpc_id = aws_vpc.ecs-vpc.id
 
-  ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [aws_security_group.public_sg.id]
-  }
+  # ingress {
+  #   from_port       = 22
+  #   to_port         = 22
+  #   protocol        = "tcp"
+  #   security_groups = [aws_security_group.public_sg.id]
+  # }
 
-  ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = var.private_subnet_cidr
-  }
+  # ingress {
+  #   from_port   = 3306
+  #   to_port     = 3306
+  #   protocol    = "tcp"
+  #   cidr_blocks = var.private_subnet_cidr
+  # }
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    security_groups = [aws_security_group.public_sg.id]
-  }
+  # ingress {
+  #   from_port   = 80
+  #   to_port     = 80
+  #   protocol    = "tcp"
+  #   security_groups = [aws_security_group.public_sg.id]
+  # }
 
   # egress {
   #   from_port   = 3306
@@ -84,6 +84,14 @@ resource "aws_security_group" "private_sg" {
   #   protocol    = "tcp"
   #   cidr_blocks = ["0.0.0.0/0"]
   # }
+
+  ingress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.public_sg.id, aws_security_group.efs_sg.id]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -100,9 +108,29 @@ resource "aws_security_group" "efs_sg" {
   vpc_id = aws_vpc.ecs-vpc.id
 
   ingress {
-    from_port       = 2049
-    to_port         = 2049
-    protocol        = "tcp"
-    security_groups = [aws_security_group.private_sg.id]
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = var.private_subnet_cidr
   }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = var.private_subnet_cidr
+  }
+
+  # ingress {
+  #   from_port       = 2049
+  #   to_port         = 2049
+  #   protocol        = "nfs"
+  #   security_groups = [aws_security_group.private_sg.id]
+  # }
+
+  # egress = {
+  #   from_port   = 1024
+  #   to_port     = 65535
+  #   protocol    = "tcp"
+  #   security_groups = [ aws_security_group.private_sg.id ]
 }

@@ -1,4 +1,3 @@
-
 variable "repo-name" {
   description = "Name for the ECR repository"
   type        = string
@@ -17,7 +16,6 @@ variable "ecs_subnets" {
 variable "ecs_instance_type" {
   description = "Instance type for the ECS cluster"
   type        = string
-  default     = "t2.micro"
 }
 variable "ecs_security_groups" {
   description = "Security group IDs for the ECS cluster"
@@ -37,7 +35,6 @@ variable "log_region" {
 variable "container_port" {
   description = "Port on which the container listens"
   type        = number
-  default     = 80
 }
 
 variable "efs_security_group_ids" {
@@ -61,8 +58,7 @@ variable "certificate_arn" {
 }
 
 variable "ssm-key" {
-  description = "SSM key for the RDS instance"
-  # type        = map(string)
+  description = "SSM key from the rds module"
 }
 
 variable "vpc_id" {
@@ -71,7 +67,17 @@ variable "vpc_id" {
 }
 
 variable "ssh_key_name" {
-  description = "SSH key  name for the ECS instances"
+  description = "SSH key name for the ECS instances. Used for debugging"
   type        = string
-  default = "us-east-1"
+}
+
+variable "container_path" {
+  description = "Path for the container"
+  type        = string
+}
+
+variable "efs_directory" {
+  description = "Directory for the EFS access point"
+  type        = string
+  
 }

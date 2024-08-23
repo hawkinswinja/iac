@@ -4,10 +4,10 @@ resource "aws_ecs_task_definition" "task1" {
   task_role_arn      = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.ecs_exec_role.arn
   network_mode       = "awsvpc"
-  # cpu                = 256
-  memory             = 128
+  cpu                = 800
+  memory             = 900
   container_definitions = jsonencode([{
-    name         = "wordpress-app",
+    name         = "${var.name}-container",
     image        = "${aws_ecr_repository.repo.repository_url}:${var.image_tag}",
     essential = true,
     restart    = "always",
@@ -18,14 +18,14 @@ resource "aws_ecs_task_definition" "task1" {
 
     mountPoints = [{
       sourceVolume  = "${var.name}-efs-volume",
-      containerPath = "/usr/share/nginx/html",
+      containerPath = var.container_path,
       readOnly      = false,
     }],
     environment = [
-    #   {
-    #   name  = "WORDPRESS_DB_HOST"
-    #   value = var.ssm-key["/wordpress/WORDPRESS_DB_HOST"].value
-    #   },
+      {
+      name  = "WORDPRESS_DB_HOST"
+      value = "${var.ssm-key["/wordpress/WORDPRESS_DB_HOST"].value}:3306"
+      },
       {
       name  = "WORDPRESS_DB_NAME"
       value = var.ssm-key["/wordpress/WORDPRESS_DB_NAME"].value
@@ -70,7 +70,6 @@ resource "aws_ecs_service" "wordpress" {
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.task1.arn
   desired_count   = 2
-  # iam_role        = aws_iam_role.ecs_exec_role.arn
   launch_type     = "EC2"
   network_configuration {
     subnets          = var.ecs_subnets
@@ -84,8 +83,8 @@ resource "aws_ecs_service" "wordpress" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.alb_target_group.arn
-    container_name   = "wordpress-app"
-    container_port   = 80
+    container_name   = "${var.name}-container"
+    container_port   = var.container_port
   }
 
   lifecycle {
