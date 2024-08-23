@@ -16,7 +16,7 @@ resource "aws_efs_file_system" "fs" {
 resource "aws_efs_access_point" "test" {
   file_system_id = aws_efs_file_system.fs.id
   root_directory {
-    path = "/opt/wordpress"
+    path = "/wordpress"
     creation_info {
       owner_gid = 1000
       owner_uid = 1000

@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "task1" {
         protocol      = "tcp"
     }],
 
-    mount_points = [{
+    mountPoints = [{
       sourceVolume  = "${var.name}-efs-volume",
       containerPath = "/usr/share/nginx/html",
       readOnly      = false,
@@ -50,18 +50,14 @@ resource "aws_ecs_task_definition" "task1" {
     },
   }])
 
-
   volume {
     name = "${var.name}-efs-volume"
-
     efs_volume_configuration {
       file_system_id          = aws_efs_file_system.fs.id
-      root_directory          = "/"
       transit_encryption      = "ENABLED"
-      transit_encryption_port = 2999
       authorization_config {
         access_point_id = aws_efs_access_point.test.id
-        iam             = "ENABLED"
+        iam             = "DISABLED"
       }
     }
   }
