@@ -4,8 +4,8 @@ resource "aws_ecs_task_definition" "task1" {
   task_role_arn      = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.ecs_exec_role.arn
   network_mode       = "awsvpc"
-  cpu                = 800
-  memory             = 900
+  # cpu                = 
+  memory             = 512
   container_definitions = jsonencode([{
     name         = "${var.name}-container",
     image        = "${aws_ecr_repository.repo.repository_url}:${var.image_tag}",
@@ -65,7 +65,7 @@ resource "aws_ecs_task_definition" "task1" {
 
 
 # ECS SERVICE
-resource "aws_ecs_service" "wordpress" {
+resource "aws_ecs_service" "default" {
   name            = "${var.name}-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.task1.arn

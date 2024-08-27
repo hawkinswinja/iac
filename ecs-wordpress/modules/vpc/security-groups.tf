@@ -101,6 +101,27 @@ resource "aws_security_group" "private_sg" {
   
 }
 
+resource "aws_security_group" "rds_sg" {
+  name        = "rds_sg"
+  description = "Allow mysql traffic from private_sg on port 3306"
+
+  vpc_id = aws_vpc.ecs-vpc.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = [aws_security_group.private_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    security_groups = [aws_security_group.private_sg.id]
+  }
+}
+
 resource "aws_security_group" "efs_sg" {
   name        = "efs_sg"
   description = "Allow inbound traffic from private_sg on port 2049"

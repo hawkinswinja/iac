@@ -9,7 +9,7 @@ module "rds" {
   db_username = var.db_username
   db_name     = var.db_name
   kms_key_id  = var.kms_key_id
-  rds-security-group = [module.vpc.private_sg]
+  rds-security-group = [module.vpc.rds_sg]
   db_subnets  = module.vpc.ecs-private-subnet
   name        = var.vpc_name
 }
