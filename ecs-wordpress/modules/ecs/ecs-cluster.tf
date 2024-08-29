@@ -46,7 +46,6 @@ resource "aws_autoscaling_group" "ecs_asg" {
 
 resource "aws_ecs_capacity_provider" "main" {
   name = "${var.name}-ecs-capacity-provider"
-  # managed_termination_protection = "DISABLED"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn = aws_autoscaling_group.ecs_asg.arn
