@@ -27,6 +27,7 @@ The wordpress application runs as a container using ecs service to ensure desire
 - ECS capacity provider using autoscaling group
 - ECS Task and service setup
 - ECS Application Loadbalancer
+- EFS for persistent storage
 
 ### [ECS IAM](modules/ecs/ecs-iam.tf)
 - EC2 instance profile with EC2 container service role policy attached
