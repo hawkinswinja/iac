@@ -4,8 +4,8 @@ resource "aws_ecs_task_definition" "task1" {
   task_role_arn      = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.ecs_exec_role.arn
   network_mode       = "awsvpc"
-  # cpu                = 
-  memory             = 512
+  cpu                = 100
+  memory             = 128
   container_definitions = jsonencode([{
     name         = "${var.name}-container",
     image        = "${aws_ecr_repository.repo.repository_url}:${var.image_tag}",
@@ -21,6 +21,7 @@ resource "aws_ecs_task_definition" "task1" {
       containerPath = var.container_path,
       readOnly      = false,
     }],
+
     environment = [
       {
       name  = "WORDPRESS_DB_HOST"
@@ -63,12 +64,12 @@ resource "aws_ecs_task_definition" "task1" {
   }
 }
 
-
 # ECS SERVICE
 resource "aws_ecs_service" "default" {
   name            = "${var.name}-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.task1.arn
+  scheduling_strategy = "REPLICA"
   desired_count   = 2
   launch_type     = "EC2"
   network_configuration {
