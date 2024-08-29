@@ -35,7 +35,7 @@ resource "aws_lb_target_group" "alb_target_group" {
   target_type = "ip"
   vpc_id      = var.vpc_id
   health_check {
-    path                = "/wp-login.php"
+    path                = "/"
     protocol            = "HTTP"
     port                = "traffic-port"
     healthy_threshold   = 2
